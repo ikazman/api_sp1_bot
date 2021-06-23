@@ -77,10 +77,10 @@ def main():
     logger.debug('Бот запущен')
     while True:
         try:
-            homeworks = get_homeworks(current_timestamp).get('homeworks')
-            if homeworks:
-                current_homework = homeworks[0]
-                current_status = parse_homework_status(current_homework)
+            homeworks = get_homeworks(current_timestamp)
+            new_homework = homeworks.get('homeworks')
+            if new_homework:
+                current_status = parse_homework_status(new_homework[0])
                 send_message(current_status)
             time.sleep(300)
             current_timestamp = homeworks.get('current_date')
