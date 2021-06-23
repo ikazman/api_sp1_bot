@@ -45,8 +45,9 @@ def parse_homework_status(homework):
         return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
     except Exception as e:
-            error_message = f'Бот упал с ошибкой: {e}'
-            logging.exception(send_message(error_message))
+        error_message = f'Бот упал с ошибкой: {e}'
+        logging.exception(send_message(error_message))
+
 
 def get_homeworks(current_timestamp):
     """Получаем данные по всем домашним работам."""
@@ -55,18 +56,17 @@ def get_homeworks(current_timestamp):
 
     try:
         homework_statuses = requests.get(API_URL,
-                                        headers=header,
-                                        params=params)
+                                         headers=header,
+                                         params=params)
         return homework_statuses.json()
 
     except requests.exceptions.RequestException as e:
         logging.exception(f'Ошибка запроса {e}')
 
 
-
 def send_message(message):
     """Направляем сообщение пользователю."""
-    return logger.info(bot.send_message(CHAT_ID, text=message))
+    return bot.send_message(CHAT_ID, text=message)
 
 
 def main():
@@ -87,7 +87,8 @@ def main():
 
         except Exception as e:
             error_message = f'Бот упал с ошибкой: {e}'
-            logging.exception(send_message(error_message))
+            logging.exception(error_message)
+            send_message(error_message)
             time.sleep(5)
 
 
