@@ -27,17 +27,26 @@ bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
 def parse_homework_status(homework):
     """Получаем имя и текущий статус проекта."""
-    homework_name = homework.get('homework_name')
-    current_status = homework.get('status')
+    statuses = {
+        'reviewing': 'Работа взята на проверку.',
+        'rejected': 'К сожалению, в работе нашлись ошибки.',
+        'approved': 'Ревьюеру всё понравилось, работа зачтена!'
+    }
 
-    if current_status == 'reviewing':
-        verdict = 'Работа взята на проверку.'
-    elif current_status == 'rejected':
-        verdict = 'К сожалению, в работе нашлись ошибки.'
-    else:
-        verdict = 'Ревьюеру всё понравилось, работа зачтена!'
-    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
+    try:
+        homework_name = homework.get('homework_name')
+        current_status = homework.get('status')
 
+        if current_status is None or current_status not in statuses:
+            verdict = 'Работа не найдена или статус не известен.'
+        else:
+            verdict = statuses[current_status]
+
+        return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
+
+    except Exception as e:
+            error_message = f'Бот упал с ошибкой: {e}'
+            logging.exception(send_message(error_message))
 
 def get_homeworks(current_timestamp):
     """Получаем данные по всем домашним работам."""
@@ -49,6 +58,7 @@ def get_homeworks(current_timestamp):
                                         headers=header,
                                         params=params)
         return homework_statuses.json()
+
     except requests.exceptions.RequestException as e:
         logging.exception(f'Ошибка запроса {e}')
 
@@ -60,8 +70,7 @@ def send_message(message):
 
 
 def main():
-    # current_timestamp = int(time.time())
-    current_timestamp = 0
+    current_timestamp = int(time.time())
     logger = logging.getLogger(__name__)
     handler = logging.StreamHandler()
     logger.addHandler(handler)
