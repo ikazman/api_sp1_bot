@@ -44,29 +44,35 @@ def get_homeworks(current_timestamp):
     header = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     params = {'from_date': current_timestamp}
 
-    homework_statuses = requests.get(API_URL,
-                                     headers=header,
-                                     params=params)
-    return homework_statuses.json()
+    try:
+        homework_statuses = requests.get(API_URL,
+                                        headers=header,
+                                        params=params)
+        return homework_statuses.json()
+    except requests.exceptions.RequestException as e:
+        logging.exception(f'Ошибка запроса {e}')
+
 
 
 def send_message(message):
     """Направляем сообщение пользователю."""
-    return bot.send_message(CHAT_ID, text=message)
+    return logger.info(bot.send_message(CHAT_ID, text=message))
 
 
 def main():
-    current_timestamp = int(time.time())
+    # current_timestamp = int(time.time())
+    current_timestamp = 0
     logger = logging.getLogger(__name__)
     handler = logging.StreamHandler()
     logger.addHandler(handler)
+    logger.debug('Бот запущен')
     while True:
         try:
-            homeworks = get_homeworks(current_timestamp)
-            if homeworks.get('homeworks'):
-                current_homework = homeworks.get('homeworks')[0]
+            homeworks = get_homeworks(current_timestamp).get('homeworks')
+            if homeworks:
+                current_homework = homeworks[0]
                 current_status = parse_homework_status(current_homework)
-                logger.info(send_message(current_status))
+                send_message(current_status)
             time.sleep(300)
             current_timestamp = homeworks.get('current_date')
 
