@@ -66,6 +66,7 @@ def get_homeworks(current_timestamp):
 
 def send_message(message):
     """Направляем сообщение пользователю."""
+    logging.info(message)
     return bot.send_message(CHAT_ID, text=message)
 
 
