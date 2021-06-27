@@ -80,6 +80,8 @@ def main():
         try:
             homeworks = get_homeworks(current_timestamp)
             new_homework = homeworks.get('homeworks')
+            if not current_timestamp:
+                current_timestamp = int(time.time())
             if new_homework:
                 current_status = parse_homework_status(new_homework[0])
                 send_message(current_status)
