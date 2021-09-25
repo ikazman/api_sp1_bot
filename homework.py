@@ -17,7 +17,7 @@ logging.basicConfig(
 PRAKTIKUM_TOKEN = os.getenv('PRAKTIKUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
-API_URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
+API_URL = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 
 bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
@@ -31,7 +31,8 @@ def parse_homework_status(homework):
     }
 
     try:
-        homework_name = homework.get('homework_name')
+        homework_name = homework.get('lesson_name')
+        reviewer_message = homework.get('reviewer_comment')
         current_status = homework.get('status')
 
         if current_status is None or current_status not in statuses:
@@ -39,7 +40,7 @@ def parse_homework_status(homework):
         else:
             verdict = statuses[current_status]
 
-        return f'"{homework_name}":\n\n{verdict}'
+        return f'{homework_name}:\n\n{verdict}.\n\n"{reviewer_message}"'
 
     except Exception as e:
         error_message = f'Бот упал с ошибкой: {e}'
