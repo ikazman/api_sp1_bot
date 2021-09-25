@@ -40,7 +40,7 @@ def parse_homework_status(homework):
         else:
             verdict = statuses[current_status]
 
-        return f'{homework_name}:\n\n{verdict}.\n\n"{reviewer_message}"'
+        return f'{homework_name}\n\n{verdict}\n\n"{reviewer_message}"'
 
     except Exception as e:
         error_message = f'Бот упал с ошибкой: {e}'
